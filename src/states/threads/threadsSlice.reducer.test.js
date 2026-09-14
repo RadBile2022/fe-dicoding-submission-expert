@@ -22,7 +22,7 @@ describe('threads reducer', () => {
 
     const nextState = reducer(initialState, setCategory('react'));
 
-    expect(nextState.selectedCategory).toBe('salah');
+    expect(nextState.selectedCategory).toBe('react');
   });
 
   it('should optimistically move user vote to upVotesBy', () => {
