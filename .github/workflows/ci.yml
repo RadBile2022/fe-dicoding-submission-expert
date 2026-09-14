@@ -3,10 +3,10 @@ name: Continuous Integration
 on:
   pull_request:
     branches:
-      - master
+      - main
   push:
     branches:
-      - master
+      - main
 
 jobs:
   automation-test-job:
@@ -27,7 +27,7 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      - name: Run unit and component tests
+      - name: Run tests
         run: npm test
 
       - name: Build application
