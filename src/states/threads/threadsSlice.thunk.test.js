@@ -9,9 +9,9 @@ import api from '../../services/api';
 import { asyncReceiveThreads } from './threadsSlice';
 
 /*
-Skenario thunk asyncReceiveThreads:
-1. Jika API berhasil, thunk harus dispatch pending lalu fulfilled dengan data threads.
-2. API getAllThreads dimock agar pengujian tidak bergantung pada jaringan.
+Skenario pengujian thunk asyncReceiveThreads:
+1. Ketika API berhasil, harus dispatch pending lalu fulfilled dengan data threads.
+2. Ketika API gagal, harus dispatch pending lalu rejected dengan pesan error.
 */
 
 describe('asyncReceiveThreads thunk', () => {
@@ -27,6 +27,7 @@ describe('asyncReceiveThreads thunk', () => {
 
     await asyncReceiveThreads()(dispatch, getState, undefined);
 
+    expect(api.getAllThreads).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledTimes(2);
     expect(dispatch.mock.calls[0][0].type).toBe(
       'threads/receiveThreads/pending',
@@ -35,5 +36,25 @@ describe('asyncReceiveThreads thunk', () => {
       'threads/receiveThreads/fulfilled',
     );
     expect(dispatch.mock.calls[1][0].payload).toEqual(fakeThreads);
+  });
+
+  it('should dispatch pending and rejected when API fails', async () => {
+    vi.spyOn(api, 'getAllThreads').mockRejectedValue(
+      new Error('Gagal memuat threads'),
+    );
+    const dispatch = vi.fn();
+    const getState = vi.fn();
+
+    await asyncReceiveThreads()(dispatch, getState, undefined);
+
+    expect(api.getAllThreads).toHaveBeenCalledTimes(1);
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch.mock.calls[0][0].type).toBe(
+      'threads/receiveThreads/pending',
+    );
+    expect(dispatch.mock.calls[1][0].type).toBe(
+      'threads/receiveThreads/rejected',
+    );
+    expect(dispatch.mock.calls[1][0].payload).toBe('Gagal memuat threads');
   });
 });

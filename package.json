@@ -10,10 +10,11 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
     "test:watch": "vitest",
-    "e2e": "start-server-and-test dev http://127.0.0.1:5173 cypress:run",
-    "e2e:open": "start-server-and-test dev http://127.0.0.1:5173 cypress:open",
+    "e2e": "start-server-and-test dev:e2e http://127.0.0.1:4173 cypress:run",
+    "e2e:open": "start-server-and-test dev:e2e http://127.0.0.1:4173 cypress:open",
     "cypress:run": "cypress run",
-    "cypress:open": "cypress open"
+    "cypress:open": "cypress open",
+    "dev:e2e": "vite --host 127.0.0.1 --port 4173 --strictPort"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",

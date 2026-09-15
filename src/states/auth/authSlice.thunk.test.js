@@ -9,9 +9,9 @@ import api from '../../services/api';
 import { asyncLoginUser } from './authSlice';
 
 /*
-Skenario thunk asyncLoginUser:
-1. Jika login berhasil, token harus disimpan dan profil pengguna dimuat.
-2. Thunk harus dispatch pending lalu fulfilled dengan profil pengguna.
+Skenario pengujian thunk asyncLoginUser:
+1. Ketika login berhasil, token harus disimpan, profil dimuat, lalu dispatch fulfilled.
+2. Ketika login gagal, token tidak boleh disimpan dan thunk harus dispatch rejected.
 */
 
 describe('asyncLoginUser thunk', () => {
@@ -36,10 +36,35 @@ describe('asyncLoginUser thunk', () => {
       password: 'secret123',
     })(dispatch, getState, undefined);
 
+    expect(api.login).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'secret123',
+    });
     expect(api.putAccessToken).toHaveBeenCalledWith('fake-token');
+    expect(api.getOwnProfile).toHaveBeenCalledTimes(1);
     expect(dispatch).toHaveBeenCalledTimes(2);
     expect(dispatch.mock.calls[0][0].type).toBe('auth/login/pending');
     expect(dispatch.mock.calls[1][0].type).toBe('auth/login/fulfilled');
     expect(dispatch.mock.calls[1][0].payload).toEqual(fakeUser);
+  });
+
+  it('should dispatch rejected and not save token when login fails', async () => {
+    vi.spyOn(api, 'login').mockRejectedValue(new Error('Login gagal'));
+    const putAccessTokenSpy = vi.spyOn(api, 'putAccessToken');
+    const getOwnProfileSpy = vi.spyOn(api, 'getOwnProfile');
+    const dispatch = vi.fn();
+    const getState = vi.fn();
+
+    await asyncLoginUser({
+      email: 'wrong@example.com',
+      password: 'wrong-password',
+    })(dispatch, getState, undefined);
+
+    expect(putAccessTokenSpy).not.toHaveBeenCalled();
+    expect(getOwnProfileSpy).not.toHaveBeenCalled();
+    expect(dispatch).toHaveBeenCalledTimes(2);
+    expect(dispatch.mock.calls[0][0].type).toBe('auth/login/pending');
+    expect(dispatch.mock.calls[1][0].type).toBe('auth/login/rejected');
+    expect(dispatch.mock.calls[1][0].payload).toBe('Login gagal');
   });
 });
