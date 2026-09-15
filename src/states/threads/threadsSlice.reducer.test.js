@@ -31,7 +31,7 @@ describe('threads reducer', () => {
   it('should change selectedCategory when setCategory is dispatched', () => {
     const initialState = createInitialState();
 
-    const nextState = reducer(initialState, setCategory('salah'));
+    const nextState = reducer(initialState, setCategory('react'));
 
     expect(nextState.selectedCategory).toBe('react');
   });
