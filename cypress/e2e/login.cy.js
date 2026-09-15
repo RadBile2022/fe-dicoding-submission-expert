@@ -9,18 +9,11 @@ Skenario pengujian End-to-End alur login:
 describe('Login flow', () => {
   const password = 'testing123';
   const testUser = {
+    id: 'user-e2e-1',
     name: 'Discussly E2E User',
-    email: `discussly-e2e-${Date.now()}@example.com`,
+    email: 'discussly-e2e@example.com',
     password,
   };
-
-  before(() => {
-    cy.request({
-      method: 'POST',
-      url: 'https://forum-api.dicoding.dev/v1/register',
-      body: testUser,
-    });
-  });
 
   it('should show an error when credentials are invalid', () => {
     cy.intercept('POST', '**/login', {
@@ -42,12 +35,40 @@ describe('Login flow', () => {
   });
 
   it('should login successfully using valid credentials', () => {
+    cy.intercept('POST', '**/login', {
+      statusCode: 200,
+      body: {
+        status: 'success',
+        message: 'success',
+        data: {
+          token: 'fake-access-token',
+        },
+      },
+    }).as('loginSuccess');
+
+    cy.intercept('GET', '**/users/me', {
+      statusCode: 200,
+      body: {
+        status: 'success',
+        message: 'success',
+        data: {
+          user: {
+            id: testUser.id,
+            name: testUser.name,
+            email: testUser.email,
+          },
+        },
+      },
+    }).as('getOwnProfile');
+
     cy.visit('/login');
 
     cy.get('#login-email').type(testUser.email);
     cy.get('#login-password').type(password);
     cy.contains('button', 'Login').click();
 
+    cy.wait('@loginSuccess');
+    cy.wait('@getOwnProfile');
     cy.location('pathname', { timeout: 10000 }).should('eq', '/');
     cy.contains(testUser.name, { timeout: 10000 }).should('be.visible');
   });
