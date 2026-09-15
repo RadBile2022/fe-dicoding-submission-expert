@@ -2,8 +2,7 @@
 Skenario pengujian End-to-End alur login:
 1. Login dengan kredensial tidak valid harus tetap berada di halaman login dan menampilkan error.
 2. Login dengan kredensial valid harus berhasil menuju halaman utama dan menampilkan nama pengguna.
-3. Akun valid dibuat terlebih dahulu melalui Dicoding Forum API agar
-   pengujian dapat diulang secara independen.
+3. Seluruh request login dimock agar pengujian stabil dan independen dari API eksternal.
 */
 
 describe('Login flow', () => {
