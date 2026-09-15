@@ -77,4 +77,13 @@ Screenshot tidak dapat dibuat dari source code karena harus menjadi bukti kondis
 
 Tambahkan URL deployment Vercel pada catatan submission Dicoding.
 Hapus `node_modules` dan `dist` sebelum membuat ZIP final.
-# fe-dicoding-submission-expert
+
+## Automation Testing Coverage
+
+Submission versi ini sengaja memiliki lebih dari minimum kriteria agar tidak ambigu saat direview:
+
+- Reducer: 4 test case pada `threadsSlice.reducer.test.js`.
+- Thunk: 4 test case total, mencakup success dan failure pada `asyncReceiveThreads` dan `asyncLoginUser`.
+- React Components: 7 test case total pada `VoteButton` dan `CategoryFilter`.
+- End-to-End: 2 skenario login, yaitu invalid credentials dan successful login.
+- Setiap berkas pengujian memiliki komentar skenario pengujian di bagian atas file.
