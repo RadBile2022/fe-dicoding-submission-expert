@@ -20,6 +20,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm install
@@ -27,8 +28,11 @@ jobs:
       - name: Run ESLint
         run: npm run lint
 
-      - name: Run tests
+      - name: Run unit and component tests
         run: npm test
 
       - name: Build application
         run: npm run build
+
+      - name: Run end-to-end test
+        run: npm run e2e
